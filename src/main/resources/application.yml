@@ -1,0 +1,29 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: demo-springboot-paypal-v2
+  mvc:
+    servlet:
+      load-on-startup: 1
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: 127.0.0.1:3306/payment?useSSL=false
+    username: root
+    password: 3530132302@Zxc
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5 #最小空闲连接数量
+      maximum-pool-size: 15 #连接池最大连接数，默认是10
+      idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+      auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+paypal:
+  access-token: access_token$sandbox$xc36fbrp8mp2jkdw$8af471bc680812f379b4dc7f4fc329fe
+  client-id: AQ6l6uMBmgUmt4XKEmSnzhReugnVxHK9wvjs0oyADh1EniuWkjYzXp0xMKpwyllFJkRq82f6ozLpcn2d
+  secret: EOAyDoRyAcUDnUru97tVVrvFV_eBLOqqMudEsVLIPpxWEPqQllwpPUNuA9LaV5op-73N6BR0X9BejHhG
