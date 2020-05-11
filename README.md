@@ -1,6 +1,6 @@
 **Java基于Spring boot的支付demo**
 
-**整合PayPal、GMO Internet、Alipay、WeChat**
+**整合PayPal、GMO Internet（Alipay、WeChat暂不支持）**
 
 **一、启动步骤：**
 
