@@ -150,7 +150,7 @@ public class PayPalOrderUtils {
 			}
 			// 把PayPal captureId跟流水明细对应，退款需要用到
 			Integer resultCode = detailServiceImpl.batchUpdateCaptureIdByMyOrderId(detailEntityList);
-			if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+			if (!resultCode.equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 				return null;
 			}
 			order.purchaseUnits().get(0).payments().captures().get(0).links()
@@ -398,7 +398,7 @@ public class PayPalOrderUtils {
 		}
 		// 添加流水明细
 		Integer resultCode = batchInsertDetail(detailEntityList);
-		if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+		if (!resultCode.equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 			return Lists.newArrayList();
 		}
 		return payPalDetailedConditionList;

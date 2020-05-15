@@ -12,23 +12,16 @@ import java.io.Serializable;
 @Getter
 public enum ResponseMessageConstants implements Serializable {
 
-	SUCCESSFULOPERATION(0, "Successful operation", "操作成功"),
-	SERVICEEXCEPTION(-100, "Network is not good, please retry.", "服务异常");
+	SUCCESS_OPERATION(0, "操作成功"),
+	SERVICE_EXCEPTION(-100, "服务异常");
 
 
 	private Integer key;
 	private String value;
-	private String china;
 
-	 ResponseMessageConstants(Integer key, String value) {
+	ResponseMessageConstants(Integer key, String value) {
 		this.key = key;
 		this.value = value;
-	}
-
-	 ResponseMessageConstants(Integer key, String value, String china) {
-		this.key = key;
-		this.value = value;
-		this.china = china;
 	}
 
 	public static String getValueByKey(Integer key) {

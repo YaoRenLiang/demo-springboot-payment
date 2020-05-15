@@ -12,7 +12,8 @@ public enum PlatformConstants {
 
 	PAYPAL(1, "PayPal"),
 	ALIPAY(2, "Alipay"),
-	WECHAT(3, "WeChat");
+	WECHAT(3, "WeChat"),
+	GMO(4, "GMO");
 
 	PlatformConstants(Integer key, String value) {
 		this.key = key;

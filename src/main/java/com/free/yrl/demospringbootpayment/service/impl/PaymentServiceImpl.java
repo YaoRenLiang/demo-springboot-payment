@@ -49,8 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
 	public ResponseMessage<String> getPayInfo(List<String> myOrderIdList,
 											  Integer platform,
 											  String currencyCode,
-											  String cancelUrl,
-											  String captureUrl) {
+											  String baseUrl) {
 
 		String result = null;
 		String platformOrderId = null;
@@ -65,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
 				.amount(new BigDecimal("998"))
 				.status(1)
 				.build());
-		if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+		if (!resultCode.equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 			return error(resultCode);
 		}
 		if (platform.equals(PlatformConstants.PAYPAL.getKey())) {
@@ -73,8 +72,8 @@ public class PaymentServiceImpl implements PaymentService {
 			Order order = payPalOrderUtils.createOrder(id,
 					myOrderIdList,
 					currencyCode,
-					cancelUrl + "/" + id,
-					captureUrl + "/" + id);
+					baseUrl + "/paypal/cancel/" + id,
+					baseUrl + "/paypal/capture/" + id);
 			platformOrderId = order.id();
 			order.links().forEach(link -> System.out.println(link.rel() + " => " + link.method() + ":" + link.href()));
 			List<LinkDescription> linkList = order.links();
@@ -92,7 +91,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 		} else {
 			// 没有匹配就返回null
-			return error(ResponseMessageConstants.SERVICEEXCEPTION);
+			return error(ResponseMessageConstants.SERVICE_EXCEPTION);
 		}
 		log.info("Platform Order ID: " + platformOrderId);
 		// 记录付款相关信息，创建订单流水
@@ -100,7 +99,7 @@ public class PaymentServiceImpl implements PaymentService {
 				.id(id)
 				.platformOrderId(platformOrderId)
 				.build());
-		if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+		if (!resultCode.equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 			return error(resultCode);
 		}
 		return success(result);
@@ -113,7 +112,7 @@ public class PaymentServiceImpl implements PaymentService {
 		/*此处应该拿着本平台的订单Id，查询到对应的PayPalOrderId，然后进行捕获操作。
 		 * 然后触发捕获扣款deduct()接口完成扣款操作*/
 		ResponseMessage<StreamEntity> result = streamServiceImpl.selectById(streamId);
-		if (!result.getCode().equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+		if (!result.getCode().equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 			return error(result.getCode());
 		}
 		StreamEntity streamEntity = result.getData();

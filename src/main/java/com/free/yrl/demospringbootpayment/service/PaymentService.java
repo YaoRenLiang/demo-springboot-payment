@@ -20,15 +20,13 @@ public interface PaymentService {
 	 * @param myOrderIdList 一组本平台的orderId
 	 * @param platform      支付平台，详情参考枚举 PlatformConstants
 	 * @param currencyCode  币种，详情参考枚举 PayPalCurrencyConstants
-	 * @param cancelUrl     客户取消付款后，将客户重定向到的URL
-	 * @param captureUrl    客户付款成功后，将客户重定向到的URL
+	 * @param baseUrl       访问本平台url前缀，例如www.yrl.com
 	 * @return 授权支付链接
 	 */
 	ResponseMessage<String> getPayInfo(List<String> myOrderIdList,
-					  Integer platform,
-					  String currencyCode,
-					  String cancelUrl,
-					  String captureUrl);
+									   Integer platform,
+									   String currencyCode,
+									   String baseUrl);
 
 	/**
 	 * 捕获订单

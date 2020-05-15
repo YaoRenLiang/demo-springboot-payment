@@ -10,10 +10,10 @@ import lombok.Getter;
 @Getter
 public enum StreamStatusConstants {
 
-	noOk(1, "未完成"),
-	doing(2, "处理中"),
-	ok(3, "已完成"),
-	cancel(4, "已取消");
+	NO_OK(1, "未完成"),
+	DOING(2, "处理中"),
+	OK(3, "已完成"),
+	CANCEL(4, "已取消");
 
 	StreamStatusConstants(Integer key, String value) {
 		this.key = key;

@@ -30,7 +30,7 @@ public class StreamServiceImpl implements StreamService {
 
 		streamEntity.setInsertTime(new Date());
 		streamEntity.setUpdateTime(new Date());
-		streamEntity.setStatus(StreamStatusConstants.noOk.getKey());
+		streamEntity.setStatus(StreamStatusConstants.NO_OK.getKey());
 		int successRow = streamDao.insert(streamEntity);
 		return cudReturn(successRow);
 
@@ -53,7 +53,7 @@ public class StreamServiceImpl implements StreamService {
 
 		int successRow = streamDao.updateById(StreamEntity.builder()
 				.id(id)
-				.status(StreamStatusConstants.cancel.getKey())
+				.status(StreamStatusConstants.CANCEL.getKey())
 				.build());
 		return cudReturn(successRow);
 
@@ -63,7 +63,7 @@ public class StreamServiceImpl implements StreamService {
 	public ResponseMessage<StreamEntity> selectById(Long id) {
 
 		if (id == null) {
-			return error(ResponseMessageConstants.SERVICEEXCEPTION);
+			return error(ResponseMessageConstants.SERVICE_EXCEPTION);
 		}
 		return success(streamDao.selectById(id));
 
