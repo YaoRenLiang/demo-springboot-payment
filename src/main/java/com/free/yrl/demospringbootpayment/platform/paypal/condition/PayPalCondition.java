@@ -29,7 +29,7 @@ public class PayPalCondition implements Serializable {
 	private String cancelUrl;
 
 	@ApiModelProperty(value = "客户付款成功后，将客户重定向到的URL", required = true)
-	private String returnUrl;
+	private String captureUrl;
 
 	@ApiModelProperty(value = "在PayPal网站上显示以供客户结帐的着陆页类型，详情参考枚举 PayPalLandingPageConstants", required = true)
 	private String landingPage;

@@ -12,7 +12,7 @@ spring:
     active: dev
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: 127.0.0.1:3306/payment?useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/payment
     username: root
     password: 3530132302@Zxc
     type: com.zaxxer.hikari.HikariDataSource
@@ -23,6 +23,9 @@ spring:
       auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
       max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
       connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false #关闭驼峰到下划线的映射
 paypal:
   access-token: access_token$sandbox$xc36fbrp8mp2jkdw$8af471bc680812f379b4dc7f4fc329fe
   client-id: AQ6l6uMBmgUmt4XKEmSnzhReugnVxHK9wvjs0oyADh1EniuWkjYzXp0xMKpwyllFJkRq82f6ozLpcn2d

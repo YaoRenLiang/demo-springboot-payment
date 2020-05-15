@@ -1,9 +1,10 @@
 package com.free.yrl.demospringbootpayment;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,7 +17,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 @EnableScheduling
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@MapperScan({"com.free.**"})
+@ComponentScan({"com.free.**"})
+@SpringBootApplication
 public class DemoSpringbootPaymentApplication {
 
 	public static void main(String[] args) {

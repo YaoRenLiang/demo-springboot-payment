@@ -1,13 +1,19 @@
 package com.free.yrl.demospringbootpayment.platform.paypal.util;
 
+import com.free.yrl.demospringbootpayment.base.SnowFlake;
+import com.free.yrl.demospringbootpayment.constant.ResponseMessageConstants;
+import com.free.yrl.demospringbootpayment.entity.DetailEntity;
 import com.free.yrl.demospringbootpayment.platform.paypal.condition.ItemCondition;
 import com.free.yrl.demospringbootpayment.platform.paypal.condition.PayPalCondition;
 import com.free.yrl.demospringbootpayment.platform.paypal.condition.PayPalDetailedCondition;
+import com.free.yrl.demospringbootpayment.platform.paypal.constant.*;
+import com.free.yrl.demospringbootpayment.service.DetailService;
 import com.google.common.collect.Lists;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.http.exceptions.HttpException;
 import com.paypal.orders.*;
+import com.sun.xml.internal.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
@@ -26,29 +32,70 @@ import java.util.List;
 @Component
 public class PayPalOrderUtils {
 
-	@Resource
-	private PayPalHttpClient payPalHttpClient;
+	/**
+	 * 流水单表主键
+	 */
+	private Long streamId;
+
+	/**
+	 * 本平台的订单Id
+	 */
+	private List<String> myOrderIdList;
+
+	/**
+	 * 币种，详情参考枚举 PayPalCurrencyConstants
+	 */
+	private String currencyCode;
+
+	/**
+	 * 客户取消付款后，将客户重定向到的URL
+	 */
+	private String cancelUrl;
+
+	/**
+	 * 客户付款成功后，将客户重定向到的URL
+	 */
+	private String captureUrl;
 
 	private PayPalCondition payPalCondition = null;
 
-	private PayPalDetailedCondition payPalDetailedCondition = null;
+	@Resource
+	private SnowFlake snowFlake;
+
+	@Resource
+	private DetailService detailServiceImpl;
+
+	@Resource
+	private PayPalHttpClient payPalHttpClient;
 
 	/**
 	 * 创建PayPal订单
 	 * 推荐支付步骤：
 	 * 1.先创建本平台订单并生成订单号
-	 * 2.订单创建成功之后，创建PayPal订单，并把本平台订单号追加到cancelUrl、returnUrl之后，
+	 * 2.订单创建成功之后，创建PayPal订单，并把本平台订单号追加到cancelUrl、captureUrl之后，
 	 * 例子：www.yrl.com/success/myOrderIdxxxxxx
 	 * 3.拿到PayPal订单号更新到本平台订单中，并把授权支付链接发送给前端
 	 * 4.付款成功后，跳转到本平台并且链接后缀携带本平台订单号，通过本平台订单号拿到PayPal订单号进行扣款操作
 	 * 如果用户取消付款，则直接更新订单状态。一定要记得通过PayPal订单号做幂等性。
 	 *
-	 * @param payPalCondition PayPal入参
 	 * @return 订单信息
 	 */
-	public Order createOrder(PayPalCondition payPalCondition) {
+	public Order createOrder(Long streamId,
+							 List<String> myOrderIdList,
+							 String currencyCode,
+							 String cancelUrl,
+							 String captureUrl) {
 
-		this.payPalCondition = payPalCondition;
+		{
+			this.streamId = streamId;
+			this.myOrderIdList = myOrderIdList;
+			this.currencyCode = currencyCode;
+			this.cancelUrl = cancelUrl;
+			this.captureUrl = captureUrl;
+		}
+		// 在PayPal网站上显示以供客户结帐的着陆页类型，详情参考枚举 PayPalLandingPageConstants
+		Integer landingPage = PayPalLandingPageConstants.NO_PREFERENCE.getKey();
+		this.payPalCondition = getPayPalCondition(landingPage);
 		Order order = null;
 		OrderRequest orderRequest = getOrderRequest();
 		OrdersCreateRequest request = new OrdersCreateRequest()
@@ -85,22 +132,35 @@ public class PayPalOrderUtils {
 		Order order = null;
 		// 创建一个捕获订单请求
 		OrdersCaptureRequest request = new OrdersCaptureRequest(payPalOrderId);
+		List<DetailEntity> detailEntityList = Lists.newArrayList();
 		try {
 			HttpResponse<Order> response = payPalHttpClient.execute(request);
 			order = response.result();
-			// 记录PayPal captureId，退款需要用到
+			// 记录PayPal captureId
 			List<PurchaseUnit> purchaseUnitList = order.purchaseUnits();
 			for (PurchaseUnit purchaseUnit : purchaseUnitList) {
-				log.info("myOrderId{}对应的captureId{}", purchaseUnit.referenceId(), purchaseUnit.payments().captures().get(0).id());
+				String captureId = purchaseUnit.payments().captures().get(0).id();
+				String myOrderId = purchaseUnit.referenceId();
+				log.info("myOrderId{}对应的captureId{}", myOrderId, captureId);
+				DetailEntity detailEntity = DetailEntity.builder()
+						.myOrderId(Long.parseLong(myOrderId))
+						.captureId(captureId)
+						.build();
+				detailEntityList.add(detailEntity);
+			}
+			// 把PayPal captureId跟流水明细对应，退款需要用到
+			Integer resultCode = detailServiceImpl.batchUpdateCaptureIdByMyOrderId(detailEntityList);
+			if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+				return null;
 			}
 			order.purchaseUnits().get(0).payments().captures().get(0).links()
-					.forEach(link -> System.out.println(link.rel() + " => " + link.method() + ":" + link.href()));
+					.forEach(link -> log.info(link.rel() + " => " + link.method() + ":" + link.href()));
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			if (ioe instanceof HttpException) {
 				// 服务器端出错
 				HttpException he = (HttpException) ioe;
-				System.out.println(he.getMessage());
+				log.info(he.getMessage());
 			} else {
 				// 客户端出错
 				log.error(ioe.getMessage());
@@ -144,7 +204,7 @@ public class PayPalOrderUtils {
 
 		return new ApplicationContext()
 				.cancelUrl(payPalCondition.getCancelUrl())
-				.returnUrl(payPalCondition.getReturnUrl())
+				.returnUrl(payPalCondition.getCaptureUrl())
 				.landingPage(payPalCondition.getLandingPage())
 				.paymentMethod(getPaymentMethod())
 				.shippingPreference(payPalCondition.getShippingPreference())
@@ -178,12 +238,11 @@ public class PayPalOrderUtils {
 	 */
 	private PurchaseUnitRequest getPurchaseUnitRequest(PayPalDetailedCondition payPalDetailedCondition) {
 
-		this.payPalDetailedCondition = payPalDetailedCondition;
 		AmountWithBreakdown amountWithBreakdown = new AmountWithBreakdown()
-				.amountBreakdown(getAmountBreakdown())
+				.amountBreakdown(getAmountBreakdown(payPalDetailedCondition))
 				.currencyCode(payPalDetailedCondition.getCurrencyCode())
-				.value(getTotalAmount());
-		List<Item> items = getItems();
+				.value(getTotalAmount(payPalDetailedCondition));
+		List<Item> items = getItems(payPalDetailedCondition);
 		return new PurchaseUnitRequest()
 				.amountWithBreakdown(amountWithBreakdown)
 				/*API调用者提供的外部ID。用于协调客户交易与PayPal交易，
@@ -202,10 +261,9 @@ public class PayPalOrderUtils {
 	 *
 	 * @return 金额的明细
 	 */
-	private AmountBreakdown getAmountBreakdown() {
+	private AmountBreakdown getAmountBreakdown(PayPalDetailedCondition payPalDetailedCondition) {
 
 		AmountBreakdown amountBreakdown = new AmountBreakdown();
-		String currencyCode = payPalDetailedCondition.getCurrencyCode();
 		// 在给定的购买单位内所有商品的折扣
 		amountBreakdown.discount(getMoney(currencyCode, payPalDetailedCondition.getDiscount()));
 		// 一个采购单元内所有项目的手续费
@@ -239,7 +297,7 @@ public class PayPalOrderUtils {
 	 *
 	 * @return 一组规格
 	 */
-	private List<Item> getItems() {
+	private List<Item> getItems(PayPalDetailedCondition payPalDetailedCondition) {
 
 		List<Item> items = Lists.newArrayList();
 		List<ItemCondition> itemConditionList = payPalDetailedCondition.getItemConditionList();
@@ -267,7 +325,7 @@ public class PayPalOrderUtils {
 	 *
 	 * @return 订单总金额
 	 */
-	private String getTotalAmount() {
+	private String getTotalAmount(PayPalDetailedCondition payPalDetailedCondition) {
 
 		BigDecimal itemTotal = new BigDecimal(payPalDetailedCondition.getItemTotal());
 		BigDecimal handling = new BigDecimal(payPalDetailedCondition.getHandling());
@@ -285,6 +343,101 @@ public class PayPalOrderUtils {
 			// num大于等于0
 			return totalAmount.toString();
 		}
+
+	}
+
+	/**
+	 * 获取PayPal入参
+	 *
+	 * @param landingPage PayPal客户结帐的着陆页类型
+	 * @return PayPal入参
+	 */
+	private PayPalCondition getPayPalCondition(Integer landingPage) {
+
+		List<PayPalDetailedCondition> payPalDetailedConditionList = getPayPalDetailedConditionList();
+		return PayPalCondition.builder()
+				.paymentIntent(PayPalPaymentIntentConstants.CAPTURE.getValue())
+				.cancelUrl(cancelUrl)
+				.captureUrl(captureUrl)
+				.landingPage(PayPalLandingPageConstants.getValueByKey(landingPage))
+				.payeePreferred(PayPalPayeePreferredConstants.UNRESTRICTED.getValue())
+				.userAction(PayPalUserActionConstants.PAY_NOW.getValue())
+				// 付款人邮箱
+				.email("123123@foxmail.com")
+				.payPalDetailedConditionList(payPalDetailedConditionList)
+				.build();
+
+	}
+
+	/**
+	 * list里有几个entity将会在PayPal对应生成几个订单
+	 *
+	 * @return 商品信息
+	 */
+	private List<PayPalDetailedCondition> getPayPalDetailedConditionList() {
+
+		List<PayPalDetailedCondition> payPalDetailedConditionList = Lists.newArrayList();
+		List<ItemCondition> itemConditionList = getItemConditionList();
+		List<DetailEntity> detailEntityList = Lists.newArrayList();
+		for (String myOrderId : myOrderIdList) {
+			PayPalDetailedCondition payPalDetailedCondition = PayPalDetailedCondition.builder()
+					.myOrderId(myOrderId)
+					.currencyCode(currencyCode)
+					.itemConditionList(itemConditionList)
+					.discount("0.1")
+					.handling("0.2")
+					.insurance("0.3")
+					.shipping("0.4")
+					.shippingDiscount("0.2")
+					.description("这是最大的购买说明" + myOrderIdList)
+					.build();
+			payPalDetailedConditionList.add(payPalDetailedCondition);
+			DetailEntity detailEntity = getDetailEntity(myOrderId,
+					payPalDetailedCondition);
+			detailEntityList.add(detailEntity);
+		}
+		// 添加流水明细
+		Integer resultCode = batchInsertDetail(detailEntityList);
+		if (!resultCode.equals(ResponseMessageConstants.SUCCESSFULOPERATION.getKey())) {
+			return Lists.newArrayList();
+		}
+		return payPalDetailedConditionList;
+
+	}
+
+	private DetailEntity getDetailEntity(String myOrderId, PayPalDetailedCondition payPalDetailedCondition) {
+
+		return DetailEntity.builder()
+				.streamId(streamId)
+				.myOrderId(Long.parseLong(myOrderId))
+				.sn(snowFlake.nextId() + "")
+				.currencyCode(currencyCode)
+				.amount(new BigDecimal(getTotalAmount(payPalDetailedCondition)))
+				.build();
+
+	}
+
+	private Integer batchInsertDetail(List<DetailEntity> detailEntityList) {
+
+		return detailServiceImpl.batchInsert(detailEntityList);
+
+	}
+
+	private List<ItemCondition> getItemConditionList() {
+
+		List<ItemCondition> itemConditionList = Lists.newArrayList();
+		for (int i = 1; i < 3; i++) {
+			ItemCondition itemCondition = ItemCondition.builder()
+					.name("item标题" + i)
+					.quantity(i + "")
+					.unitAmount(i + "")
+					.tax("0.03")
+					.sku("大个")
+					.description("item说明" + i)
+					.build();
+			itemConditionList.add(itemCondition);
+		}
+		return itemConditionList;
 
 	}
 

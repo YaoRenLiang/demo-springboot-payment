@@ -1,5 +1,7 @@
 package com.free.yrl.demospringbootpayment.base;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,12 +22,15 @@ import java.util.Date;
 public class BaseEntity {
 
 	@ApiModelProperty(value = "主键")
+	@TableId
 	Long id;
 
 	@ApiModelProperty(value = "数据插入时间")
+	@TableField
 	Date insertTime;
 
 	@ApiModelProperty(value = "最近一次更新时间")
+	@TableField
 	Date updateTime;
 
 }

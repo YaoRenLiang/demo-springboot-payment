@@ -8,13 +8,13 @@ import lombok.Getter;
  * @author 姚壬亮
  **/
 @Getter
-public enum PaymentTypeConstants {
+public enum PlatformConstants {
 
 	PAYPAL(1, "PayPal"),
 	ALIPAY(2, "Alipay"),
 	WECHAT(3, "WeChat");
 
-	PaymentTypeConstants(Integer key, String value) {
+	PlatformConstants(Integer key, String value) {
 		this.key = key;
 		this.value = value;
 	}

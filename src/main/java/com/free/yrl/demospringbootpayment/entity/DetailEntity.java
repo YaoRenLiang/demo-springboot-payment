@@ -1,5 +1,7 @@
 package com.free.yrl.demospringbootpayment.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.free.yrl.demospringbootpayment.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
+ * 流水明细表
+ *
  * @author 姚壬亮
  **/
 @Data
@@ -19,24 +23,31 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class StreamBillEntity extends BaseEntity {
+@TableName("Detail")
+public class DetailEntity extends BaseEntity {
 
-	@ApiModelProperty(value = "商户订单流水号")
-	String sn;
-
-	@ApiModelProperty(value = "订单流水单表主键")
+	@ApiModelProperty(value = "流水单表主键")
+	@TableField
 	Long streamId;
 
+	@ApiModelProperty(value = "流水明细编号")
+	@TableField
+	String sn;
+
 	@ApiModelProperty(value = "本平台的订单Id")
+	@TableField
 	Long myOrderId;
 
 	@ApiModelProperty(value = "第三方支付平台的捕获付款Id")
+	@TableField
 	String captureId;
 
 	@ApiModelProperty(value = "币种")
-	String currency;
+	@TableField
+	String currencyCode;
 
 	@ApiModelProperty(value = "支付金额")
+	@TableField
 	BigDecimal amount;
 
 }

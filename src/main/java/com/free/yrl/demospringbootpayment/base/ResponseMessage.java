@@ -38,20 +38,30 @@ public class ResponseMessage<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * 服务层返回处理
+	 *
+	 * @param successRow 成功的行数（c u d操作）
+	 * @return 状态码
+	 */
+	public static Integer cudReturn(int successRow) {
+
+		if (successRow <= 0) {
+			return ResponseMessageConstants.SERVICEEXCEPTION.getKey();
+		}
+		return ResponseMessageConstants.SUCCESSFULOPERATION.getKey();
+
+	}
+
 	/*返回错误*/
 	public static <T> ResponseMessage<T> error(ResponseMessageConstants constants) {
 		Integer key = constants.getKey();
-		return new ResponseMessage(key, msg(key), null);
+		return error(key);
 	}
 
 	/*返回错误*/
 	public static <T> ResponseMessage<T> error(Integer code) {
 		return new ResponseMessage(code, msg(code), null);
-	}
-
-	/*返回错误*/
-	public static <T> ResponseMessage<T> error(Integer code, String message) {
-		return new ResponseMessage(code, msg(code, message), null);
 	}
 
 	/*返回成功*/
