@@ -32,7 +32,7 @@ public class StreamServiceImpl implements StreamService {
 		streamEntity.setUpdateTime(new Date());
 		streamEntity.setStatus(StreamStatusConstants.NO_OK.getKey());
 		int successRow = streamDao.insert(streamEntity);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
@@ -44,7 +44,7 @@ public class StreamServiceImpl implements StreamService {
 		}
 		streamEntity.setUpdateTime(new Date());
 		int successRow = streamDao.updateById(streamEntity);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
@@ -55,7 +55,7 @@ public class StreamServiceImpl implements StreamService {
 				.id(id)
 				.status(StreamStatusConstants.CANCEL.getKey())
 				.build());
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 

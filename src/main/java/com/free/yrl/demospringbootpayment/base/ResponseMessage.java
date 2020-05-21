@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
- * 返回结构体
+ * 响应结构体
  *
  * @author 姚壬亮
  **/
@@ -44,12 +44,12 @@ public class ResponseMessage<T> implements Serializable {
 	}
 
 	/**
-	 * 控制层返回处理
+	 * 根据状态码返回
 	 *
 	 * @param resultCode 结果状态码
 	 * @return 状态码
 	 */
-	public static <T> ResponseMessage<T> controllerReturn(Integer resultCode) {
+	public static <T> ResponseMessage<T> byCode(Integer resultCode) {
 
 		if (!resultCode.equals(ResponseMessageConstants.SUCCESS_OPERATION.getKey())) {
 			return error(resultCode);
@@ -59,12 +59,12 @@ public class ResponseMessage<T> implements Serializable {
 	}
 
 	/**
-	 * 服务层返回处理
+	 * 根据数据处理成功的条数来返回
 	 *
-	 * @param successRow 成功的行数（c u d操作）
+	 * @param successRow 成功的行数（例如：c u d操作）
 	 * @return 状态码
 	 */
-	public static Integer cudReturn(int successRow) {
+	public static Integer byRow(int successRow) {
 
 		if (successRow <= 0) {
 			return ResponseMessageConstants.SERVICE_EXCEPTION.getKey();
@@ -94,9 +94,10 @@ public class ResponseMessage<T> implements Serializable {
 	 * @param <T>  范性
 	 * @return 返回体
 	 */
-	public static <T> ResponseMessage<T> error(Integer code) {
+	public static <T> ResponseMessage<T>
+	error(Integer code) {
 
-		return new ResponseMessage(code, msg(code), null);
+		return new ResponseMessage<>(code, msg(code), null);
 
 	}
 
@@ -109,7 +110,7 @@ public class ResponseMessage<T> implements Serializable {
 	public static <T> ResponseMessage<T> success() {
 
 		Integer key = ResponseMessageConstants.SUCCESS_OPERATION.getKey();
-		return new ResponseMessage(key, msg(key), null);
+		return new ResponseMessage<>(key, msg(key), null);
 
 	}
 
@@ -126,12 +127,12 @@ public class ResponseMessage<T> implements Serializable {
 		if (data instanceof String || data instanceof Integer || data instanceof Date) {
 			Map<String, Object> map = Maps.newHashMap();
 			map.put("data", data);
-			return new ResponseMessage(key, msg(key), map);
+			return new ResponseMessage<>(key, msg(key), (T) map);
 		}
 		if (isEmpty(data)) {
 			data = null;
 		}
-		return new ResponseMessage(key, msg(key), data);
+		return new ResponseMessage<>(key, msg(key), (T) data);
 
 	}
 

@@ -31,16 +31,18 @@ public class PayPalPaymentUtils {
 	 *
 	 * @param captureId    创建订单成功之后的captureId
 	 * @param currencyCode 退款的币种，详情参考枚举 PayPalCurrencyConstants
-	 * @param money        退款的金额
+	 * @param amount       退款的金额
 	 * @return 退款信息
 	 */
-	public Refund refund(String captureId, String currencyCode, String money) {
+	public Refund refund(String captureId,
+						 String currencyCode,
+						 String amount) {
 		Refund refund = null;
 		try {
 			RefundRequest refundRequest = new RefundRequest();
-			if (Strings.isNotBlank(currencyCode) && Strings.isNotBlank(money)) {
+			if (Strings.isNotBlank(currencyCode) && Strings.isNotBlank(amount)) {
 				// 退款金额
-				refundRequest.amount(getMoney(currencyCode, money));
+				refundRequest.amount(getMoney(currencyCode, amount));
 			}
 			CapturesRefundRequest capturesRefundRequest = new CapturesRefundRequest(captureId)
 					.requestBody(refundRequest);
@@ -63,7 +65,8 @@ public class PayPalPaymentUtils {
 		return refund;
 	}
 
-	private Money getMoney(String currencyCode, String money) {
+	private Money getMoney(String currencyCode,
+						   String money) {
 
 		return new Money()
 				.currencyCode(currencyCode)

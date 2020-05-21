@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author 姚壬亮
  **/
 @Configuration
-public class PaypalConfig {
+public class PayPalConfig {
 
 	@Value("${spring.profiles.active}")
 	private String active;

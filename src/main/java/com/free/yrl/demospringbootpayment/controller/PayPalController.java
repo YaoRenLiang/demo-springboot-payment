@@ -42,7 +42,7 @@ public class PayPalController {
 
 		// 关闭当前订单
 		Integer resultCode = streamServiceImpl.close(streamId);
-		return controllerReturn(resultCode);
+		return byCode(resultCode);
 
 	}
 

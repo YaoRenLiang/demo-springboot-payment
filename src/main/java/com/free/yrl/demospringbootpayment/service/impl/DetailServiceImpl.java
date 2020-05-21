@@ -9,10 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
-import static com.free.yrl.demospringbootpayment.base.ResponseMessage.cudReturn;
+import static com.free.yrl.demospringbootpayment.base.ResponseMessage.byRow;
 
 /**
  * 支付服务
@@ -38,7 +39,7 @@ public class DetailServiceImpl implements DetailService {
 		detailEntity.setInsertTime(new Date());
 		detailEntity.setUpdateTime(new Date());
 		int successRow = detailDao.insert(detailEntity);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
@@ -51,7 +52,7 @@ public class DetailServiceImpl implements DetailService {
 			}
 		});
 		int successRow = detailDao.batchInsert(detailEntityList);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
@@ -59,7 +60,7 @@ public class DetailServiceImpl implements DetailService {
 	public Integer batchUpdateById(List<DetailEntity> detailEntityList) {
 
 		int successRow = detailDao.batchUpdateById(detailEntityList);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
@@ -67,7 +68,7 @@ public class DetailServiceImpl implements DetailService {
 	public Integer batchUpdateCaptureIdByMyOrderId(List<DetailEntity> detailEntityList) {
 
 		int successRow = detailDao.batchUpdateCaptureIdByMyOrderId(detailEntityList);
-		return cudReturn(successRow);
+		return byRow(successRow);
 
 	}
 
