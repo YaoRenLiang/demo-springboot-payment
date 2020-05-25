@@ -126,7 +126,7 @@ public class ResponseMessage<T> implements Serializable {
 		Integer key = ResponseMessageConstants.SUCCESS_OPERATION.getKey();
 		if (data instanceof String || data instanceof Integer || data instanceof Date) {
 			Map<String, Object> map = Maps.newHashMap();
-			map.put("data", data);
+			map.put("result", data);
 			return new ResponseMessage<>(key, msg(key), (T) map);
 		}
 		if (isEmpty(data)) {

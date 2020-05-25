@@ -37,6 +37,7 @@ public class PayPalPaymentUtils {
 	public Refund refund(String captureId,
 						 String currencyCode,
 						 String amount) {
+
 		Refund refund = null;
 		try {
 			RefundRequest refundRequest = new RefundRequest();
@@ -63,6 +64,7 @@ public class PayPalPaymentUtils {
 			}
 		}
 		return refund;
+
 	}
 
 	private Money getMoney(String currencyCode,
