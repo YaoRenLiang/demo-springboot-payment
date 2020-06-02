@@ -129,6 +129,7 @@ public class ResponseMessage<T> implements Serializable {
 			map.put("result", data);
 			return new ResponseMessage<>(key, msg(key), (T) map);
 		}
+		String a = new String("");
 		if (isEmpty(data)) {
 			data = null;
 		}
