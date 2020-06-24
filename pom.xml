@@ -31,46 +31,47 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <!--spring-boot测试组件-->
+        <!--Spring Boot 测试组件-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!--整合lombok 框架-->
+        <!--整合 Lombok 框架-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
 
+        <!--整合 Log4j 框架-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>LATEST</version>
         </dependency>
 
-        <!--整合谷歌json-->
+        <!--整合谷歌 Gson-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>LATEST</version>
         </dependency>
 
-        <!--整合web-->
+        <!--整合 Web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!--整合aop-->
+        <!--整合 Aop-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!--整合swagger2接口文档生成 Start-->
+        <!--整合 Swagger2 接口文档生成-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
@@ -100,7 +101,7 @@
             <artifactId>swagger-models</artifactId>
             <version>${swagger.models}</version>
         </dependency>
-        <!--接口文档生成 END-->
+        <!--接口文档生成 End-->
 
         <!--PayPal Start-->
         <dependency>
@@ -122,7 +123,7 @@
             <version>LATEST</version>
         </dependency>
 
-        <!--整合Mysql驱动-->
+        <!--整合 Mysql 驱动-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -131,18 +132,18 @@
     </dependencies>
 
     <build>
-        <!--按照artifactId作为包名-->
+        <!--按照 ArtifactId 作为包名-->
         <finalName>${project.artifactId}</finalName>
         <plugins>
 
-            <!--SpringBoot的构建的插件，打war包，不然报错，找不到入口，如果作为单纯的jar不去启动，需要去掉这个plugin或加上一段代码，不然其他项目引入找不到包-->
+            <!--Spring Boot 的构建的插件，打 War 包，不然报错，找不到入口，如果作为单纯的 Jar 不去启动，需要去掉这个 Plugin 或加上一段代码，不然其他项目引入找不到包-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.maven.plugin}</version>
             </plugin>
 
-            <!--maven打包跳过测试-->
+            <!--Maven 打包跳过测试-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
