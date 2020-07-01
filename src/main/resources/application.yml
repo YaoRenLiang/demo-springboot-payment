@@ -5,10 +5,7 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s #设置优雅停机缓冲期，最大的等待时间
   application:
-    name: demo-springboot-paypal-v2
-  mvc:
-    servlet:
-      load-on-startup: 1
+    name: demo-springboot-paypal
   main:
     allow-bean-definition-overriding: true
   profiles:
