@@ -1,6 +1,9 @@
 server:
   port: 8080
+  shutdown: graceful #开启优雅停机，默认是 immediate 立即关机
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s #设置优雅停机缓冲期，最大的等待时间
   application:
     name: demo-springboot-paypal-v2
   mvc:
