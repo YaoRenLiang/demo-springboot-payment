@@ -11,11 +11,18 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring.boot.maven.plugin>2.1.0.RELEASE</spring.boot.maven.plugin>
+        <spring.boot.maven.plugin>LATEST</spring.boot.maven.plugin>
+        <log4j>LATEST</log4j>
+        <gson>LATEST</gson>
+        <httpclient>LATEST</httpclient>
+        <commons.beanutils>LATEST</commons.beanutils>
         <swagger2.version>2.9.2</swagger2.version>
         <swagger.ui.version>2.9.2</swagger.ui.version>
         <swagger.bootstrap.ui>1.9.3</swagger.bootstrap.ui>
         <swagger.models>1.5.21</swagger.models>
+        <mybatis.plus.boot.starter>3.3.0</mybatis.plus.boot.starter>
+        <checkout.sdk>LATEST</checkout.sdk>
+        <paypal.core>LATEST</paypal.core>
     </properties>
 
     <parent>
@@ -49,14 +56,14 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>LATEST</version>
+            <version>${log4j}</version>
         </dependency>
 
         <!--整合谷歌 Gson-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>LATEST</version>
+            <version>${gson}</version>
         </dependency>
 
         <!--整合 Web-->
@@ -103,31 +110,31 @@
         </dependency>
         <!--接口文档生成 End-->
 
-        <!--PayPal Start-->
-        <dependency>
-            <groupId>com.paypal.sdk</groupId>
-            <artifactId>checkout-sdk</artifactId>
-            <version>LATEST</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.paypal.sdk</groupId>
-            <artifactId>paypal-core</artifactId>
-            <version>LATEST</version>
-        </dependency>
-        <!--PayPal END-->
-
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>LATEST</version>
-        </dependency>
-
         <!--整合 Mysql 驱动-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.boot.starter}</version>
+        </dependency>
+
+        <!--PayPal Start-->
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>checkout-sdk</artifactId>
+            <version>${checkout.sdk}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>paypal-core</artifactId>
+            <version>${paypal.core}</version>
+        </dependency>
+        <!--PayPal END-->
 
     </dependencies>
 
